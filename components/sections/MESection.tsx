@@ -5,25 +5,20 @@ import { Section } from './Section';
 import { GlassWindow } from '@/components/ui/GlassWindow';
 import { StartButton } from '@/components/ui/StartButton';
 import { motion } from 'framer-motion';
-import { fadeIn, crtShake } from '@/lib/animations/variants';
+import { fadeIn } from '@/lib/animations/variants';
 
-interface Section95Props {
+interface MESectionProps {
   onNext?: () => void;
 }
 
-export const Section95: React.FC<Section95Props> = ({ onNext }) => {
+export default function MESection({ onNext }: MESectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   return (
-    <Section ref={sectionRef} era="95" id="win95">
+    <Section ref={sectionRef} era="me" id="winme">
       <div className="relative w-full h-full flex items-center justify-center">
-        <GlassWindow era="95" inView={true}>
-          <motion.div
-            variants={crtShake}
-            initial="idle"
-            animate="shake"
-            className="w-full h-full bg-gradient-to-br from-teal-800 to-blue-900 relative"
-          >
+        <GlassWindow era="me" inView={true}>
+          <div className="w-full h-full bg-gradient-to-br from-blue-700 to-purple-800">
             <motion.div
               variants={fadeIn}
               initial="hidden"
@@ -31,19 +26,19 @@ export const Section95: React.FC<Section95Props> = ({ onNext }) => {
               className="absolute inset-0 p-8 flex flex-col justify-center items-center"
             >
               <h1 className="text-6xl font-bold text-white mb-4 drop-shadow-lg">
-                Windows 95
+                Windows ME
               </h1>
               <p className="text-2xl text-white/90 mb-8">
-                The Revolution (1995)
+                The Millennium Edition (2000)
               </p>
               
-              <div className="bg-gray-200/90 backdrop-blur-sm rounded p-6 mb-8 max-w-md">
-                <h3 className="text-lg font-bold text-black mb-4">Welcome to Windows 95</h3>
-                <ul className="text-sm text-black space-y-2">
-                  <li>• Start Menu & Taskbar</li>
-                  <li>• Plug and Play</li>
-                  <li>• 32-bit Architecture</li>
-                  <li>• Long Filenames</li>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-8 max-w-md">
+                <h3 className="text-lg font-bold text-white mb-4">Media Enhanced</h3>
+                <ul className="text-sm text-white/90 space-y-2">
+                  <li>• Windows Movie Maker</li>
+                  <li>• Windows Media Player 7</li>
+                  <li>• System Restore</li>
+                  <li>• Improved USB support</li>
                 </ul>
               </div>
 
@@ -53,12 +48,12 @@ export const Section95: React.FC<Section95Props> = ({ onNext }) => {
                 animate="visible"
                 transition={{ delay: 0.3 }}
               >
-                <StartButton era="95" onNext={onNext} />
+                <StartButton era="me" onNext={onNext} />
               </motion.div>
             </motion.div>
-          </motion.div>
+          </div>
         </GlassWindow>
       </div>
     </Section>
   );
-};
+}

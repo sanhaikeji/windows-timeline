@@ -7,22 +7,22 @@ import { StartButton } from '@/components/ui/StartButton';
 import { motion } from 'framer-motion';
 import { fadeIn, crtShake } from '@/lib/animations/variants';
 
-interface Section95Props {
+interface Section98Props {
   onNext?: () => void;
 }
 
-export const Section95: React.FC<Section95Props> = ({ onNext }) => {
+export default function Section98({ onNext }: Section98Props) {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   return (
-    <Section ref={sectionRef} era="95" id="win95">
+    <Section ref={sectionRef} era="98" id="win98">
       <div className="relative w-full h-full flex items-center justify-center">
-        <GlassWindow era="95" inView={true}>
+        <GlassWindow era="98" inView={true}>
           <motion.div
             variants={crtShake}
             initial="idle"
             animate="shake"
-            className="w-full h-full bg-gradient-to-br from-teal-800 to-blue-900 relative"
+            className="w-full h-full bg-gradient-to-br from-blue-800 to-indigo-900 relative"
           >
             <motion.div
               variants={fadeIn}
@@ -31,19 +31,19 @@ export const Section95: React.FC<Section95Props> = ({ onNext }) => {
               className="absolute inset-0 p-8 flex flex-col justify-center items-center"
             >
               <h1 className="text-6xl font-bold text-white mb-4 drop-shadow-lg">
-                Windows 95
+                Windows 98
               </h1>
               <p className="text-2xl text-white/90 mb-8">
-                The Revolution (1995)
+                The Evolution (1998)
               </p>
               
               <div className="bg-gray-200/90 backdrop-blur-sm rounded p-6 mb-8 max-w-md">
-                <h3 className="text-lg font-bold text-black mb-4">Welcome to Windows 95</h3>
+                <h3 className="text-lg font-bold text-black mb-4">What's New</h3>
                 <ul className="text-sm text-black space-y-2">
-                  <li>• Start Menu & Taskbar</li>
-                  <li>• Plug and Play</li>
-                  <li>• 32-bit Architecture</li>
-                  <li>• Long Filenames</li>
+                  <li>• Internet Explorer 4</li>
+                  <li>• Windows Update</li>
+                  <li>• USB Support</li>
+                  <li>• DVD Playback</li>
                 </ul>
               </div>
 
@@ -53,7 +53,7 @@ export const Section95: React.FC<Section95Props> = ({ onNext }) => {
                 animate="visible"
                 transition={{ delay: 0.3 }}
               >
-                <StartButton era="95" onNext={onNext} />
+                <StartButton era="98" onNext={onNext} />
               </motion.div>
             </motion.div>
           </motion.div>
@@ -61,4 +61,4 @@ export const Section95: React.FC<Section95Props> = ({ onNext }) => {
       </div>
     </Section>
   );
-};
+}
