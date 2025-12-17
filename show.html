@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 版本详情 - Windows时间线</title>
+    <meta name="description" content="查看Windows各版本的详细更新历史，包括小版本号和功能更新">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4da6ff;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #4da6ff;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 2rem 4rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #4da6ff 0%, #667eea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #b0b0b0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Windows版本网格 */
+        .windows-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .windows-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .windows-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(77, 166, 255, 0.3);
+        }
+
+        .windows-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-color);
+        }
+
+        /* 版本卡片样式 */
+        .version-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .version-logo {
+            width: 60px;
+            height: 60px;
+            background: var(--accent-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .version-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .version-year {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .version-summary {
+            color: #b0b0b0;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .version-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .version-features li {
+            padding: 0.3rem 0;
+            color: #e0e0e0;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .version-features li::before {
+            content: '•';
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+        }
+
+        .expand-hint {
+            text-align: center;
+            color: #4da6ff;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        /* 详情卡片 */
+        .detail-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .detail-modal.active {
+            display: flex;
+        }
+
+        .detail-content {
+            background: rgba(30, 30, 46, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .detail-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .detail-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--accent-color);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .detail-title h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-subtitle {
+            color: #888;
+        }
+
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .detail-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #4da6ff;
+        }
+
+        .version-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .version-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .version-number {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #4da6ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .version-date {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .version-changes {
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .version-changes ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .version-changes li {
+            padding: 0.2rem 0;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .version-changes li::before {
+            content: '▸';
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+        }
+
+        /* Windows 12 特殊样式 */
+        .windows-12-card {
+            background: linear-gradient(135deg, rgba(0, 168, 255, 0.1) 0%, rgba(102, 126, 234, 0.1) 100%);
+            border: 2px solid rgba(0, 168, 255, 0.3);
+        }
+
+        .rumor-badge {
+            display: inline-block;
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .container {
+                padding: 5rem 1rem 2rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .windows-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .windows-card {
+                padding: 1.5rem;
+            }
+
+            .detail-content {
+                margin: 1rem;
+                padding: 1.5rem;
+                max-height: 90vh;
+            }
+
+            .detail-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* 滚动条样式 */
+        .detail-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .detail-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .detail-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        .detail-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">Windows 时间线</div>
+            <div class="nav-links">
+                <a href="home.html">主页</a>
+                <a href="windows-timeline.html">时间线动画</a>
+                <a href="README_CN.md" target="_blank">项目文档</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主容器 -->
+    <div class="container">
+        <div class="header">
+            <h1>Windows 版本详情</h1>
+            <p>探索Windows操作系统从1985年到2025年的完整更新历史，包括每个版本的小版本号和功能更新</p>
+        </div>
+
+        <!-- Windows版本网格 -->
+        <div class="windows-grid">
+            <!-- MS-DOS -->
+            <div class="windows-card" data-version="dos" style="--accent-color: #0a0a0a;">
+                <div class="version-header">
+                    <div class="version-logo">DOS</div>
+                    <div class="version-info">
+                        <h3>MS-DOS</h3>
+                        <div class="version-year">1985-1994</div>
+                    </div>
+                </div>
+                <div class="version-summary">
+                    微软的第一个操作系统，为个人电脑奠定了基础。从1.0到6.22版本，见证了PC时代的开始。
+                </div>
+                <ul class="version-features">
+                    <li>命令行界面</li>
+                    <li>文件系统管理</li>
+                    <li>批处理脚本</li>
+                    <li>内存管理</li>
+                </ul>
+                <div class="expand-hint">点击查看详细版本 →</div>
+            </div>
+
+            <!-- Windows 1.0-2.0 -->
+            <div class="windows-card" data-version="win1" style="--accent-color: #008080;">
+                <div class="version-header">
+                    <div class="version-logo">Win</div>
+                    <div class="version-info">
+                        <h3>Windows 1.0-2.0</h3>
+                        <div class="version-year">1985-1987</div>
+                    </div>
+                </div>
+                <div class="version-summary">
+                    Windows的最初版本，提供了图形用户界面，但仍依赖MS-DOS运行。
+                </div>
+                <ul class="version-features">
+                    <li>图形用户界面</li>
+                    <li>多任务处理</li>
+                    <li>鼠标支持</li>
+                    <li>窗口管理</li>
+                </ul>
+                <div class="expand-hint">点击查看详细版本 →</div>
+            </div>
+
+            <!-- Windows 3.x -->
+            <div class="windows-card" data-version="win3" style="--accent-color: #008080;">
+                <div class="version-header">
+                    <div class="version-logo">3.x</div>
+                    <div class="version-info">
+                        <h3>Windows 3.x</h3>
+                        <div class="version-year">1990-1994</div>
+                    </div>
+                </div>
+                <div class="version-summary">
+                    第一个获得商业成功的Windows版本，引入了程序管理器和文件管理器。
+                </div>
+                <ul class="version-features">
+                    <li>程序管理器</li>
+                    <li>文件管理器</li>
+                    <li>TrueType字体</li>
+                    <li>OLE对象链接</li>
+                </ul>
+                <div class="expand-hint">点击查看详细版本 →</div>
+            </div>
+
+            <!-- Windows 95 -->
+            <div class="windows-card" data-version="win95" style="--accent-color: #008080;">
+                <div class="version-header">
+                    <div class="version-logo">95</div>
+                    <div class="version-info">
+                        <h3>Windows 95</h3>
+                        <div class="version-year">1995-1998</div>
+                    </div>
+                </div>
+                <div class="version-summary">
+                    革命性的版本，引入了开始菜单、任务栏和即插即用功能。
+                </div>
+                <ul class="version-features">
+                    <li>开始菜单和任务栏</li>
+                    <li>即插即用</li>
+                    <li>32位架构</li>
+                    <li>长文件名支持</li>
+                </ul>
+                <div class="expand-hint">点击查看详细版本 →</div>
+            </div>
+
+            <!-- Windows 98 -->
+            <div class="windows-card" data-version="win98" style="--accent-color: #4682b4;">
+                <div class="version-header">
+                    <div class="version-logo">98</div>
+                    <div class="version-info">
+                        <h3>Windows 98</h3>
+                        <div class="version-year">1998-2000</div>
+                    </div>
+                </div>
+                <div class="version-summary">
+                    Windows 95的改进版，集成了Internet Explorer 4和更好的硬件支持。
+                </div>
+                <ul class="version-features">
+                    <li>Internet Explorer 4</li>
+                    <li>Windows Update</li>
+                    <li>USB支持</li>
+                    <li>DVD播放</li>
+                </ul>
+                <div class="expand-hint">点击查看详细版本 →</div>
+            </div>
+
+            <!-- Windows ME -->
+            <div class="windows-card" data-version="winme" style="--accent-color: #4169e1;">
+                <div class="version-header">
+                    <div class="version-logo">ME</div>
+                    <div class="version-info">
+                        <h3>Windows ME</h3>
+                        <div class="version-year">2000-2001</div>
+                    </div>
+                </div>
+                <div class="version-summary">
+                    千禧年版，专注于多媒体体验和系统恢复功能。
+                </div>
+                <ul class="version-features">
+                    <li>Windows Movie Maker</li>
+                    <li>Windows Media Player 7</li>
+                    <li>系统恢复</li>
+                    <li>改进的USB支持</li>
+                </ul>
+                <div class="expand-hint">点击查看详细版本 →</div>
+            </div>
+
+            <!-- Windows XP -->
+            <div class="windows-card" data-version="winxp" style="--accent-color: #228b22;">
+                <div class="version-header">
+                    <div class="version-logo">XP</div>
+                    <div class="version-info">
+                        <h3>Windows XP</h3>
+                        <div class="version-year">2001-2007</div>
+                    </div>
+                </div>
+                <div class="version-summary">
+                    最受欢迎的Windows版本之一，以其稳定性和美观的界面著称。
+                </div>
+                <ul class="version-features">
+                    <li>Luna界面主题</li>
+                    <li>快速用户切换</li>
+                    <li>Windows Messenger</li>
+                    <li>更好的多媒体支持</li>
+                </ul>
+                <div class="expand-hint">点击查看详细版本 →</div>
+            </div>
+
+            <!-- Windows Vista -->
+            <div class="windows-card" data-version="vista" style="--accent-color: #1ba1e2;">
+                <div class="version-header">
+                    <div class="version-logo">V</div>
+                    <div class="version-info">
+                        <h3>Windows Vista</h3>
+                        <div class="version-year">2007-2009</div>
+                    </div>
+                </div>
+                <div class="version-summary">
+                    引入了Aero Glass界面和许多安全改进，但因其性能问题备受争议。
+                </div>
+                <ul class="version-features">
+                    <li>Aero Glass界面</li>
+                    <li>用户帐户控制(UAC)</li>
+                    <li>Windows Defender</li>
+                    <li>改进的搜索功能</li>
+                </ul>
+                <div class="expand-hint">点击查看详细版本 →</div>
+            </div>
+
+            <!-- Windows 7 -->
+            <div class="windows-card" data-version="win7" style="--accent-color: #436eee;">
+                <div class="version-header">
+                    <div class="version-logo">7</div>
+                    <div class="version-info">
+                        <h3>Windows 7</h3>
+                        <div class="version-year">2009-2012</div>
+                    </div>
+                </div>
+                <div class="version-summary">
+                    Vista的改进版，更好的性能和用户体验，被广泛认为是成功的版本。
+                </div>
+                <ul class="version-features">
+                    <li>Aero Snap & Shake</li>
+                    <li>跳转列表</li>
+                    <li>库功能</li>
+                    <li>触摸支持</li>
+                </ul>
+                <div class="expand-hint">点击查看详细版本 →</div>
+            </div>
+
+            <!-- Windows 8 -->
+            <div class="windows-card" data-version="win8" style="--accent-color: #00bcf2;">
+                <div class="version-header">
+                    <div class="version-logo">8</div>
+                    <div class="version-info">
+                        <h3>Windows 8</h3>
+                        <div class="version-year">2012-2013</div>
+                    </div>
+                </div>
+                <div class="version-summary">
+                    为触摸设备优化的版本，引入了Metro界面和新的开始屏幕。
+                </div>
+                <ul class="version-features">
+                    <li>Metro界面</li>
+                    <li>开始屏幕</li>
+                    <li>Charms栏</li>
+                    <li>ARM支持</li>
+                </ul>
+                <div class="expand-hint">点击查看详细版本 →</div>
+            </div>
+
+            <!-- Windows 10 -->
+            <div class="windows-card" data-version="win10" style="--accent-color: #0078d4;">
+                <div class="version-header">
+                    <div class="version-logo">10</div>
+                    <div class="version-info">
+                        <h3>Windows 10</h3>
+                        <div class="version-year">2015-2021</div>
+                    </div>
+                </div>
+                <div class="version-summary">
+                    引入了Windows即服务理念，Cortana语音助手和通用应用平台。
+                </div>
+                <ul class="version-features">
+                    <li>Windows即服务</li>
+                    <li>Cortana集成</li>
+                    <li>通用应用</li>
+                    <li>Continuum模式</li>
+                </ul>
+                <div class="expand-hint">点击查看详细版本 →</div>
+            </div>
+
+            <!-- Windows 11 -->
+            <div class="windows-card" data-version="win11" style="--accent-color: #0067c0;">
+                <div class="version-header">
+                    <div class="version-logo">11</div>
+                    <div class="version-info">
+                        <h3>Windows 11</h3>
+                        <div class="version-year">2021-至今</div>
+                    </div>
+                </div>
+                <div class="version-summary">
+                    全新的设计语言，居中的开始菜单，改进的多任务处理和Android应用支持。
+                </div>
+                <ul class="version-features">
+                    <li>全新设计语言</li>
+                    <li>居中开始菜单</li>
+                    <li>多任务处理改进</li>
+                    <li>Android应用支持</li>
+                </ul>
+                <div class="expand-hint">点击查看详细版本 →</div>
+            </div>
+
+            <!-- Windows 12 (爆料) -->
+            <div class="windows-card windows-12-card" data-version="win12" style="--accent-color: #00a8ff;">
+                <div class="version-header">
+                    <div class="version-logo">12</div>
+                    <div class="version-info">
+                        <h3>Windows 12 <span class="rumor-badge">爆料</span></h3>
+                        <div class="version-year">2025? (预测)</div>
+                    </div>
+                </div>
+                <div class="version-summary">
+                    据传将是AI驱动的重大更新，可能包含全新的用户界面和智能功能。
+                </div>
+                <ul class="version-features">
+                    <li>AI驱动的界面</li>
+                    <li>全新的设计语言</li>
+                    <li>智能文件管理</li>
+                    <li>云原生架构</li>
+                </ul>
+                <div class="expand-hint">点击查看爆料详情 →</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 详情模态框 -->
+    <div class="detail-modal" id="detailModal">
+        <div class="detail-content">
+            <button class="close-btn" onclick="closeModal()">×</button>
+            <div class="detail-header">
+                <div class="detail-logo" id="modalLogo">Win</div>
+                <div class="detail-title">
+                    <h2 id="modalTitle">Windows 版本</h2>
+                    <div class="detail-subtitle" id="modalSubtitle">版本详情</div>
+                </div>
+            </div>
+            <div class="detail-body" id="modalBody">
+                <!-- 动态内容将在这里插入 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Windows版本详细数据
+        const windowsData = {
+            dos: {
+                name: 'MS-DOS',
+                year: '1985-1994',
+                logo: 'DOS',
+                color: '#0a0a0a',
+                versions: [
+                    {
+                        number: 'MS-DOS 1.0',
+                        date: '1985年8月',
+                        changes: [
+                            '最初的PC操作系统',
+                            '支持16KB内存',
+                            '基本的文件系统',
+                            '命令行界面'
+                        ]
+                    },
+                    {
+                        number: 'MS-DOS 2.0',
+                        date: '1983年3月',
+                        changes: [
+                            '引入层次文件系统',
+                            '支持硬盘驱动器',
+                            '添加系统配置文件',
+                            '改进的命令解释器'
+                        ]
+                    },
+                    {
+                        number: 'MS-DOS 3.0',
+                        date: '1984年8月',
+                        changes: [
+                            '支持1.2MB软盘',
+                            '改进的文件管理',
+                            '添加更多命令',
+                            '更好的内存管理'
+                        ]
+                    },
+                    {
+                        number: 'MS-DOS 5.0',
+                        date: '1991年6月',
+                        changes: [
+                            '改进的内存管理',
+                            'DOS Shell图形界面',
+                            '支持2.88MB软盘',
+                            '增强的命令集'
+                        ]
+                    },
+                    {
+                        number: 'MS-DOS 6.22',
+                        date: '1994年4月',
+                        changes: [
+                            '最终版本',
+                            '磁盘压缩功能',
+                            '改进的内存优化',
+                            '完整的命令集'
+                        ]
+                    }
+                ]
+            },
+            win95: {
+                name: 'Windows 95',
+                year: '1995-1998',
+                logo: '95',
+                color: '#008080',
+                versions: [
+                    {
+                        number: 'Windows 95 RTM',
+                        date: '1995年7月',
+                        changes: [
+                            '革命性的开始菜单和任务栏',
+                            '即插即用功能',
+                            '32位架构',
+                            '长文件名支持',
+                            '改进的多任务处理'
+                        ]
+                    },
+                    {
+                        number: 'Windows 95 OSR2',
+                        date: '1996年8月',
+                        changes: [
+                            'FAT32文件系统支持',
+                            'USB支持改进',
+                            'Internet Explorer 3.0',
+                            '性能优化'
+                        ]
+                    },
+                    {
+                        number: 'Windows 95 OSR2.5',
+                        date: '1997年11月',
+                        changes: [
+                            'Internet Explorer 4.0',
+                            'Active Desktop',
+                            'Windows Desktop Update',
+                            '更好的硬件支持'
+                        ]
+                    }
+                ]
+            },
+            winxp: {
+                name: 'Windows XP',
+                year: '2001-2007',
+                logo: 'XP',
+                color: '#228b22',
+                versions: [
+                    {
+                        number: 'Windows XP RTM',
+                        date: '2001年10月',
+                        changes: [
+                            'Luna界面主题',
+                            '快速用户切换',
+                            'Windows Messenger',
+                            '改进的多媒体支持',
+                            '系统还原功能'
+                        ]
+                    },
+                    {
+                        number: 'Windows XP SP1',
+                        date: '2002年9月',
+                        changes: [
+                            'USB 2.0支持',
+                            'Windows Messenger 4.0',
+                            '改进的安全性',
+                            '性能优化'
+                        ]
+                    },
+                    {
+                        number: 'Windows XP SP2',
+                        date: '2004年8月',
+                        changes: [
+                            'Windows安全中心',
+                            'Windows防火墙',
+                            'Internet Explorer增强',
+                            '蓝牙支持',
+                            '重大安全更新'
+                        ]
+                    },
+                    {
+                        number: 'Windows XP SP3',
+                        date: '2008年4月',
+                        changes: [
+                            '最终服务包',
+                            '安全更新汇总',
+                            '网络访问保护',
+                            '内核改进'
+                        ]
+                    }
+                ]
+            },
+            win11: {
+                name: 'Windows 11',
+                year: '2021-至今',
+                logo: '11',
+                color: '#0067c0',
+                versions: [
+                    {
+                        number: 'Windows 11 21H2',
+                        date: '2021年10月',
+                        changes: [
+                            '全新居中的开始菜单',
+                            '重新设计的任务栏',
+                            'Snap Layouts和Snap Groups',
+                            'Widgets面板',
+                            'Microsoft Teams集成'
+                        ]
+                    },
+                    {
+                        number: 'Windows 11 22H2',
+                        date: '2022年9月',
+                        changes: [
+                            '开始菜单文件夹支持',
+                            '拖放任务栏功能',
+                            '任务管理器改进',
+                            '文件资源管理器标签',
+                            '更好的触摸体验'
+                        ]
+                    },
+                    {
+                        number: 'Windows 11 23H2',
+                        date: '2023年10月',
+                        changes: [
+                            'Windows Copilot AI助手',
+                            '画图应用AI功能',
+                            '截图工具改进',
+                            '文件资源管理器推荐',
+                            '动态照明控制'
+                        ]
+                    }
+                ]
+            },
+            win12: {
+                name: 'Windows 12',
+                year: '2025? (预测)',
+                logo: '12',
+                color: '#00a8ff',
+                versions: [
+                    {
+                        number: 'Windows 12 (预测)',
+                        date: '2025年可能发布',
+                        changes: [
+                            'AI驱动的全新界面',
+                            '智能文件管理系统',
+                            '云原生架构',
+                            '深度AI集成',
+                            '自适应用户界面',
+                            '增强的安全功能',
+                            '更好的跨设备同步',
+                            '虚拟现实支持'
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // 打开模态框
+        function openModal(version) {
+            const data = windowsData[version];
+            if (!data) return;
+
+            const modal = document.getElementById('detailModal');
+            const modalLogo = document.getElementById('modalLogo');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalSubtitle = document.getElementById('modalSubtitle');
+            const modalBody = document.getElementById('modalBody');
+
+            // 设置标题和样式
+            modalLogo.textContent = data.logo;
+            modalLogo.style.background = data.color;
+            modalTitle.textContent = data.name;
+            modalSubtitle.textContent = data.year;
+
+            // 生成版本列表
+            let bodyHTML = `
+                <div class="detail-section">
+                    <h3>版本历史</h3>
+                    <div class="version-list">
+            `;
+
+            data.versions.forEach(version => {
+                bodyHTML += `
+                    <div class="version-item">
+                        <div class="version-number">${version.number}</div>
+                        <div class="version-date">${version.date}</div>
+                        <div class="version-changes">
+                            <ul>
+                                ${version.changes.map(change => `<li>${change}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            });
+
+            bodyHTML += `
+                    </div>
+                </div>
+            `;
+
+            modalBody.innerHTML = bodyHTML;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            const modal = document.getElementById('detailModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 事件监听器
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为每个卡片添加点击事件
+            const cards = document.querySelectorAll('.windows-card');
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const version = this.dataset.version;
+                    openModal(version);
+                });
+            });
+
+            // 点击模态框背景关闭
+            const modal = document.getElementById('detailModal');
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // ESC键关闭模态框
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

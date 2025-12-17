@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 时间线主页 - 40年创新历程</title>
+    <meta name="description" content="体验Windows从MS-DOS到Windows 11的40年发展历程">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #4da6ff 0%, #667eea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: #4da6ff;
+        }
+
+        /* 英雄区域 */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(ellipse at center, rgba(77, 166, 255, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #4da6ff 0%, #667eea 50%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            line-height: 1.6;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-button {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .cta-primary {
+            background: linear-gradient(135deg, #4da6ff 0%, #667eea 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(77, 166, 255, 0.3);
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(77, 166, 255, 0.4);
+        }
+
+        .cta-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .cta-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* 时间线预览 */
+        .timeline-preview {
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, rgba(30, 30, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%);
+            position: relative;
+        }
+
+        .timeline-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="rgba(77,166,255,0.3)"/><circle cx="20" cy="20" r="0.5" fill="rgba(102,126,234,0.3)"/><circle cx="80" cy="30" r="0.8" fill="rgba(118,75,162,0.3)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #4da6ff;
+        }
+
+        .timeline-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .timeline-item {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-color, #4da6ff);
+        }
+
+        .timeline-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(77, 166, 255, 0.3);
+        }
+
+        .timeline-logo {
+            width: 60px;
+            height: 60px;
+            background: var(--accent-color, #4da6ff);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            margin: 0 auto 1rem;
+        }
+
+        .timeline-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-year {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-summary {
+            color: #b0b0b0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* 功能展示 */
+        .features {
+            padding: 4rem 2rem;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .features-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #4da6ff;
+        }
+
+        .feature-description {
+            color: #b0b0b0;
+            line-height: 1.6;
+        }
+
+        /* 页脚 */
+        .footer {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer p {
+            color: #888;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: #4da6ff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #667eea;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .timeline-grid,
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* 滚动动画 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">Windows 时间线</div>
+            <div class="nav-links">
+                <a href="show.html">版本详情</a>
+                <a href="README_CN.md" target="_blank">项目文档</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Windows 时间线</h1>
+            <p class="hero-subtitle">40年创新历程</p>
+            <p class="hero-description">
+                从MS-DOS到Windows 11，体验微软操作系统的完整进化历程。<br>
+                通过交互式动画、真实音效和视觉效果，重温每一个重要时刻。
+            </p>
+            <div class="cta-buttons">
+                <a href="windows-timeline.html" class="cta-button cta-primary">
+                    🚀 开始时间线之旅
+                </a>
+                <a href="show.html" class="cta-button cta-secondary">
+                    📊 查看版本详情
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 时间线预览 -->
+    <section class="timeline-preview">
+        <h2 class="section-title fade-in">Windows 发展历程</h2>
+        <div class="timeline-grid">
+            <div class="timeline-item fade-in" style="--accent-color: #0a0a0a;">
+                <div class="timeline-logo">DOS</div>
+                <div class="timeline-name">MS-DOS</div>
+                <div class="timeline-year">1985-1994</div>
+                <div class="timeline-summary">命令行时代的开创者，为个人电脑奠定基础</div>
+            </div>
+            <div class="timeline-item fade-in" style="--accent-color: #008080;">
+                <div class="timeline-logo">95</div>
+                <div class="timeline-name">Windows 95</div>
+                <div class="timeline-year">1995-1998</div>
+                <div class="timeline-summary">革命性的开始菜单和任务栏，现代Windows的雏形</div>
+            </div>
+            <div class="timeline-item fade-in" style="--accent-color: #228b22;">
+                <div class="timeline-logo">XP</div>
+                <div class="timeline-name">Windows XP</div>
+                <div class="timeline-year">2001-2007</div>
+                <div class="timeline-summary">最受欢迎的版本之一，稳定性和美观性的完美结合</div>
+            </div>
+            <div class="timeline-item fade-in" style="--accent-color: #1ba1e2;">
+                <div class="timeline-logo">V</div>
+                <div class="timeline-name">Windows Vista</div>
+                <div class="timeline-year">2007-2009</div>
+                <div class="timeline-summary">Aero Glass界面和安全功能的重大改进</div>
+            </div>
+            <div class="timeline-item fade-in" style="--accent-color: #00bcf2;">
+                <div class="timeline-logo">8</div>
+                <div class="timeline-name">Windows 8</div>
+                <div class="timeline-year">2012-2013</div>
+                <div class="timeline-summary">为触摸设备优化，引入Metro界面和新的开始屏幕</div>
+            </div>
+            <div class="timeline-item fade-in" style="--accent-color: #0067c0;">
+                <div class="timeline-logo">11</div>
+                <div class="timeline-name">Windows 11</div>
+                <div class="timeline-year">2021-至今</div>
+                <div class="timeline-summary">全新设计语言，居中开始菜单，改进的多任务处理</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能特色 -->
+    <section class="features">
+        <h2 class="section-title fade-in">项目特色</h2>
+        <div class="features-grid">
+            <div class="feature-card fade-in">
+                <div class="feature-icon">🎨</div>
+                <h3 class="feature-title">电影级体验</h3>
+                <p class="feature-description">
+                    滚动驱动的时间线，带有玻璃态效果和流畅的过渡动画，每个Windows时代都有独特的视觉风格。
+                </p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">🔊</div>
+                <h3 class="feature-title">真实音效</h3>
+                <p class="feature-description">
+                    每个Windows时代的启动音效，通过Howler.js实现跨浏览器音频播放，带来沉浸式的听觉体验。
+                </p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">🎮</div>
+                <h3 class="feature-title">交互体验</h3>
+                <p class="feature-description">
+                    开始按钮触发粒子爆炸，Metro磁贴3D翻转，Win+R运行对话框彩蛋，丰富的交互元素等待发现。
+                </p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">⚡</div>
+                <h3 class="feature-title">性能优化</h3>
+                <p class="feature-description">
+                    自动FPS监控调整粒子数量，GPU加速渲染，懒加载优化，确保在各种设备上流畅运行。
+                </p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">📱</div>
+                <h3 class="feature-title">响应式设计</h3>
+                <p class="feature-description">
+                    完美适配桌面、平板和移动设备，触摸友好的交互设计，随时随地体验Windows历史。
+                </p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">♿</div>
+                <h3 class="feature-title">无障碍访问</h3>
+                <p class="feature-description">
+                    AAA级无障碍标准，支持键盘导航和屏幕阅读器，提供减少动画选项，关爱每一位用户。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>Windows 时间线 - 庆祝40年创新历程 (1985-2025)</p>
+            <div class="footer-links">
+                <a href="windows-timeline.html">时间线动画</a>
+                <a href="show.html">版本详情</a>
+                <a href="README_CN.md" target="_blank">项目文档</a>
+            </div>
+            <p style="font-size: 0.9rem; margin-top: 1rem;">
+                本项目仅供学习和展示使用，Windows和Microsoft是Microsoft公司的商标
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // 滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // 观察所有需要动画的元素
+        document.addEventListener('DOMContentLoaded', () => {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach(el => observer.observe(el));
+        });
+
+        // 导航栏滚动效果
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const navbar = document.querySelector('.navbar');
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                navbar.style.transform = 'translateY(-100%)';
+            } else {
+                navbar.style.transform = 'translateY(0)';
+            }
+            
+            lastScrollTop = scrollTop;
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

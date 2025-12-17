@@ -1,0 +1,40 @@
+{
+  "name": "windows-timeline",
+  "version": "1.0.0",
+  "description": "40-year Windows evolution timeline (1985-2025)",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "export": "next export",
+    "lh": "lighthouse-ci http://localhost:3000/windows-timeline --preset=desktop"
+  },
+  "dependencies": {
+    "next": "14.2.5",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "framer-motion": "11.2.8",
+    "@react-three/fiber": "8.15.0",
+    "@react-three/drei": "9.88.0",
+    "three": "0.160.0",
+    "howler": "2.2.4",
+    "zustand": "4.5.0",
+    "web-vitals": "3.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.10.0",
+    "@types/react": "18.3.0",
+    "@types/react-dom": "18.3.0",
+    "@types/howler": "2.2.11",
+    "@types/three": "0.160.0",
+    "typescript": "5.5.0",
+    "tailwindcss": "3.4.0",
+    "autoprefixer": "10.4.16",
+    "postcss": "8.4.32",
+    "lighthouse-ci": "1.13.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

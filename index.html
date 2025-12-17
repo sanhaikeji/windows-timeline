@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 时间线 - 重定向</title>
+    <meta http-equiv="refresh" content="0; url=home.html">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            padding: 2rem;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #4da6ff 0%, #667eea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            color: #b0b0b0;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(77, 166, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #4da6ff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        a {
+            color: #4da6ff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Windows 时间线</h1>
+        <p>正在加载Windows时间线主页...</p>
+        <div class="loading"></div>
+        <p>如果页面没有自动跳转，<a href="home.html">点击这里</a></p>
+    </div>
+    
+    <script>
+        // JavaScript重定向作为后备
+        setTimeout(() => {
+            window.location.href = 'home.html';
+        }, 1000);
+    </script>
+</body>
+</html>
