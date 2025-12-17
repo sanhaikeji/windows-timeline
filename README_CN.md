@@ -116,7 +116,7 @@ windows-timeline/
 ### 安装依赖
 ```bash
 # 克隆项目
-git clone https://github.com/yourusername/windows-timeline.git
+git clone https://github.com/sanhaikeji/windows-timeline.git
 cd windows-timeline
 
 # 安装依赖
@@ -270,6 +270,76 @@ MIT许可证 - 详见LICENSE文件
 - 这是一个粉丝项目，用于庆祝Windows历史
 - 所有资源均为生成或在教育用途下合理使用
 - 本项目采用Kimi OK Computer辅助生成
+## 提示词
+User: 【OKcomputer 一键指令】  
+（复制整段 → 粘贴 → 回车，等待 30 秒，即可拿到 zip 并自动部署）
+
+角色冻结  
+You are a senior Chrome-60-fps engineer who only ships TypeScript React (Next.js 14 App Router) + Tailwind CSS + Framer-Motion 11 + Three.js r160 (particles only) + Howler 2.2. Lighthouse performance must be ≥ 95 on mobile & desktop. Bundle size ≤ 250 kB gzipped. No external CDN except google-fonts for Segoe UI Variable.
+
+目标冻结  
+Build a single page `/app/windows-timeline/page.tsx` that tells the 40-year birth & evolution of Windows (1985-2025) as a scroll-driven cinematic timeline. Eleven full-viewport sections (`data-era="dos|95|98|me|xp|vista|7|8|10|11"`), each centered inside a 4:3 glass window that morphs its default wallpaper and plays the authentic startup chord when entering viewport. Dark-mode-first, 60 fps locked, easter-egg rich, fully typed, i18n-ready (en-us), a11y AAA.
+
+原子级交付清单（必须逐条生成，文件名严格）  
+1. `/app/windows-timeline/page.tsx` – default export, generateMetadata, prefetch fonts, reportWebVitals.  
+2. `/app/windows-timeline/loading.tsx` – skeleton matches first section layout, 200 ms minimum.  
+3. `/components/sections/Section.tsx` – generic full-viewport wrapper, forwards ref, exposes `useInView`.  
+4. `/components/sections/DosSection.tsx` … `/11Section.tsx` – 11 concrete sections, each imports its own wallpaper & sound.  
+5. `/components/canvas/WallpaperMorph.tsx` – Three `Plane` with frag shader mixing two textures via `uProgress`.  
+6. `/components/canvas/ParticleExplosion.tsx` – GPUComputationRenderer, 2048 data texture, position & color attributes, explodes on `trigger` prop.  
+7. `/components/ui/GlassWindow.tsx` – acrylic `backdrop-blur-xl`, border radius era map, spring entrance.  
+8. `/components/ui/StartButton.tsx` – pixel-perfect Start orb per era, onClick plays sound + triggers particle explosion + scrolls to next era.  
+9. `/components/ui/MetroTile.tsx` – Win8 only, 6×2 grid, 3D flip on hover, uses `useTransform(scrollY)`.  
+10. `/components/ui/RunDialog.tsx` – appears on hotkey, autofocus input, enter `winver` → fires confetti & scrolls to `#easter`.  
+11. `/hooks/useTimelineStore.ts` – Zustand store: `scrollProgress`, `activeEra`, `userInteracted`, `unlockAudio()`, `setActiveEra()`.  
+12. `/hooks/useStartupSound.ts` – returns `{ play, stop }`, loads `.ogg` ≤ 3 s, volume 0.3, unlocked only after first click.  
+13. `/hooks/useGlobalHotkey.ts` – listens `['Meta', 'Meta', 'KeyR']` within 500 ms, toggles RunDialog.  
+14. `/hooks/useParallaxParticles.ts` – creates Three points, depth 0.3/0.6/1.0, count 200→60 on mobile, color from era palette.  
+15. `/lib/animations/variants.ts` – export `windowEntrance`, `crtShake`, `bloomPulse`, `tileFlip`.  
+16. `/lib/animations/gradients.ts` – interpolates 7-stop gradient from dos #0a0a0a to 11 #0067c0 based on scrollProgress.  
+17. `/lib/constants.ts` – era list, borderRadius map, sound URLs, hotkey timeout, particle limits.  
+18. `/public/sounds/95.ogg … 11.ogg` – 96 kbps, trimmed exact 2.5 s, loop false, preloaded with Howler.  
+19. `/public/wallpapers/*.webp` – 1024×576, 80 % quality, include Bliss, Aurora, Hero, Bloom, etc.  
+20. `/styles/windows.css` – `@font-face` Segoe UI Variable, Tahoma, MS Sans Serif; CSS variables for acrylic & bloom.  
+21. `/tailwind.config.ts` – extend colors.windows, animation.crtShake, keyframes defined.  
+22. `/next.config.js` – images.remotePatterns allow `fonts.gstatic.com`, output: 'export' compatible.  
+23. `/README.md` – `pnpm i && pnpm dev` → `pnpm build` → `pnpm lh` (runs Lighthouse CI), how to add era 12, license MIT.  
+24. `.gitignore` – node_modules, .next, out, *.tsbuildinfo, .env\*.  
+25. `package.json` – exact versions: `next 14.2.5`, `react 18.3.1`, `framer-motion 11.2.8`, `@react-three/fiber 8.15`, `three 0.160`, `howler 2.2.4`, `zustand 4.5`, `tailwindcss 3.4`, `typescript 5.5`, `lighthouse-ci 1.13`.
+
+技术红线（不可协商）  
+- 禁止 `left/top` 动画；全部 `transform` & `opacity`。  
+- 禁止 `setInterval` 动画；全部 `requestAnimationFrame` 或 Framer motion.  
+- 禁止 eval & inline JS in HTML.  
+- 粒子数桌面 2048，移动 640；若 GPU < 30 fps 自动降级到 256。  
+- 首次内容绘制 FCP ≤ 1.8 s, 最大内容绘制 LCP ≤ 2.5 s, 总阻塞时间 TBT ≤ 150 ms.  
+- 键盘导航顺序必须与视觉顺序一致；Start 按钮 focus 样式 `ring-2 ring-offset-2 ring-sky-400`.  
+- 所有声音用户首次点击后才 `Howler.unmute()`；否则 Lighthouse 报错。  
+- 提供 `prefers-reduced-motion` 媒体查询，动画时长除以 2 或退化为 `opacity` 淡入。  
+- 全部图片 `loading="eager"` 但使用 `sizes="100vw"` 与 `quality=80`，生成 640 / 750 / 828 / 1080 / 1920 五档 `srcset`.
+
+微交互清单  
+- 滚动到任一 era，玻璃窗口飞入，壁纸从上一张 0 %→100 % 扭曲 morph，持续 800 ms，ease-out-back.  
+- 95/98 窗口在入场后追加 0.24 s CRT 0.2 px 随机抖动，keyframes 已写。  
+- Vista 窗口追加 `drop-shadow(0 0 24px #1ba1e2)` + 4 s pulse loop.  
+- Win8 磁贴 hover 时 `rotateY(180deg)` 300 ms spring，scale 1.05.  
+- 点击 Start 按钮：  
+  – 播放该 era 启动和弦；  
+  – 当前壁纸色取样 5 主色，生成 2048 粒子爆炸，初速度 8 px/ms，重力 0.4 px/ms²，1.2 s 后淡出；  
+  – 粒子落完后无缝滚动到下一 era（`scrollIntoView: {behavior:'smooth', block:'start'}`）。  
+- Win+R 连按后 RunDialog 从顶部滑入 300 ms；输入 `winver` → 烟花粒子 + 浏览器震动 API（若支持），跳转 `#easter` 区域。
+
+性能监控  
+- 使用 `web-vitals` 库 `onLCP`, `onFID`, `onCLS` 打印到 `console.info` 并上报 `/api/vitals`（mock 空函数即可）。  
+- 提供 `useFPS()` hook，采样 RAF 时间差，若 < 50 fps 连续 3 帧，自动减少粒子数 50 % 并记录 `console.warn('[FPS] downgrade')`。
+
+最终输出格式  
+Zip 根目录必须是 `windows-timeline-master/`，内含以上 25 个文件，无多余文件夹。附带一张 `lighthouse-score.png` (CLI 跑 `pnpm lh` 结果)。上传完成后返回下载链接与 `npx vercel --prod` 一键部署命令。  
+
+开始生成，全程 TypeScript strict，注释英文，变量语义化，无 console.log 残留。
+User: 做成一个网站，采用中文编写清单和README，添加一个单独的页面，名为show.html，用来介绍每一个WINDOWS版本的小版本更新版本号和内容，在这个页面中，有每个Windows大版本的块，用户点击就会弹出内嵌介绍卡，这个页面中还包含Windows12的块，提供目前网络上部分爆料的功能，主页面就是你刚刚制作的动画的那个zip在网页中展示
+User: 时间线的网页上没有Windows10，而且这些体验类的按钮只有粒子效果，请你在网络上查找他们对应系统的宣传片和桌面，点击之后弹出，如果是音效，那就保持。如果无法查找，请查找他们的特征然后自行绘制
+
 
 ---
 
