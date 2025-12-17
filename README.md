@@ -185,6 +185,7 @@ MIT License - see LICENSE file for details
 - Windows and Microsoft are trademarks of Microsoft Corporation
 - This is a fan project celebrating Windows history
 - All assets are either generated or used under fair use for educational purposes
+- 本项目采用Kimi OKComputer辅助生成
 
 ---
 
