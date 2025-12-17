@@ -1,7 +1,7 @@
 # Windows Timeline
 
 An interactive, scroll-driven cinematic timeline showcasing 40 years of Windows evolution from MS-DOS (1985) to Windows 11 (2025).
-
+![Read Chinese](https://github.com/sanhaikeji/windows-timeline/blob/master/README_CN.md)
 ## Features
 
 - **🎨 Cinematic Experience**: Scroll-driven animations with glass morphism effects
