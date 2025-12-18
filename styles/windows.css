@@ -1,0 +1,140 @@
+@font-face {
+  font-family: 'Segoe UI Variable';
+  src: url('https://fonts.gstatic.com/s/segoe-ui/v22/SegoeUI-VF.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Segoe UI';
+  src: url('https://fonts.gstatic.com/s/segoe-ui/v22/SegoeUI.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Tahoma';
+  src: url('https://fonts.gstatic.com/s/tahoma/v12/Tahoma.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MS Sans Serif';
+  src: url('https://fonts.gstatic.com/s/ms-sans-serif/v14/ms-sans-serif.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* CSS Variables for Windows theming */
+:root {
+  --windows-acrylic-blur: 24px;
+  --windows-acrylic-saturation: 180%;
+  --windows-bloom-size: 24px;
+  --windows-bloom-intensity: 1;
+  
+  /* Era-specific colors */
+  --windows-dos: #0a0a0a;
+  --windows-95: #008080;
+  --windows-98: #4682b4;
+  --windows-me: #4169e1;
+  --windows-xp: #228b22;
+  --windows-vista: #1ba1e2;
+  --windows-7: #436eee;
+  --windows-8: #00bcf2;
+  --windows-10: #0078d4;
+  --windows-11: #0067c0;
+}
+
+/* Acrylic effect utility class */
+.acrylic {
+  backdrop-filter: blur(var(--windows-acrylic-blur)) saturate(var(--windows-acrylic-saturation));
+  -webkit-backdrop-filter: blur(var(--windows-acrylic-blur)) saturate(var(--windows-acrylic-saturation));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Bloom effect utility class */
+.bloom {
+  filter: drop-shadow(0 0 var(--windows-bloom-size) currentColor);
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .acrylic {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .acrylic {
+    border: 2px solid #ffffff;
+    background: rgba(0, 0, 0, 0.8);
+  }
+}
+
+/* Smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for Windows aesthetic */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+  background-clip: content-box;
+}
+
+/* Focus styles for accessibility */
+*:focus {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
+
+/* Windows-specific cursor styles */
+.start-button-95:hover {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M4,4 L16,16 M16,4 L4,16" stroke="black" stroke-width="2"/></svg>') 10 10, pointer;
+}
+
+/* GPU acceleration hints */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Performance optimization */
+.optimize-performance {
+  contain: layout style paint;
+  content-visibility: auto;
+}
